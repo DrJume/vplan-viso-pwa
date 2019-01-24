@@ -1,0 +1,5 @@
+- [] vplanCache using E-Tag
+- [] Charset auf UTF-8 stellen Her Bechstädt
+- [] Autom. checken nach neuem Vplan
+- [] remove Firefox 58 out of browserlist
+- [] real password prompt

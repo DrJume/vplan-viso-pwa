@@ -1,6 +1,6 @@
 {
-  "name": "vplan-web",
-  "short_name": "vplan-web",
+  "name": "MANOS Vplan",
+  "short_name": "Vplan",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",
