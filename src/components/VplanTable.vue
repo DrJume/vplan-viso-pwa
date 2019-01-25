@@ -45,14 +45,30 @@
       <table class="table table-hover table-striped table-sm table-bordered">
         <thead>
           <tr>
-            <th>Lehrer</th>
-            <th>Stunde</th>
-            <th>Klasse/Kurs</th>
-            <th>Fach neu</th>
-            <th>Raum neu</th>
-            <th>für Fach</th>
-            <th>für Lehrer</th>
-            <th>Info</th>
+            <th>
+              <span>Lehrer</span>
+            </th>
+            <th>
+              <span>Stunde</span>
+            </th>
+            <th>
+              <span>Klasse/Kurs</span>
+            </th>
+            <th>
+              <span>Fach neu</span>
+            </th>
+            <th>
+              <span>Raum neu</span>
+            </th>
+            <th>
+              <span>für Fach</span>
+            </th>
+            <th>
+              <span>für Lehrer</span>
+            </th>
+            <th>
+              <span>Info</span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -76,6 +92,11 @@ th > span {
   transform: rotate(180deg);
   padding: 0.4rem 0 0.4rem 0;
   vertical-align: bottom;
+  white-space: nowrap;
+}
+
+table {
+  font-size: 0.8rem;
 }
 
 @media (min-width: 576px) {
@@ -83,6 +104,10 @@ th > span {
     writing-mode: unset;
     text-orientation: unset;
     transform: none;
+  }
+
+  table {
+    font-size: 1rem;
   }
 }
 
@@ -95,8 +120,24 @@ export default {
   name: 'VplanTable',
   data () {
     return {
-      students_columns: ['class', 'lesson', 'subject', 'teacher', 'room', 'info'],
-      teachers_columns: ['new_teacher', 'lesson', 'class', 'new_subject', 'new_room', 'subject', 'teacher', 'info']
+      students_columns: [
+        'class',
+        'lesson',
+        'subject',
+        'teacher',
+        'room',
+        'info'
+      ],
+      teachers_columns: [
+        'new_teacher',
+        'lesson',
+        'class',
+        'new_subject',
+        'new_room',
+        'subject',
+        'teacher',
+        'info'
+      ]
     }
   },
   props: {

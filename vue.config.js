@@ -2,5 +2,8 @@ module.exports = {
   pwa: {
     name: 'Vplan'
   },
-  publicPath: '/vplan/' // FIXME
+  publicPath: '/vplan/',
+  css: {
+    sourceMap: true
+  }
 }

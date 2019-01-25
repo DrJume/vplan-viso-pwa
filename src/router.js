@@ -7,7 +7,7 @@ import VplanView from './views/VplanView.vue'
 Vue.use(Router)
 
 export default new Router({
-  base: '/vplan/', // FIXME
+  base: '/vplan/',
   routes: [
     {
       path: '/',

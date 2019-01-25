@@ -3,23 +3,37 @@
     <ConnectivityBadge ref="connectivity_badge"></ConnectivityBadge>
     <div class="pt-4">
       <div class="btn-group btn-group-toggle pb-4">
-        <router-link
+        <!-- <router-link
           to="?q=current"
           tag="label"
           exact-active-class="active"
           class="shadow-sm btn btn-secondary"
         >
           <input type="radio" checked> Heute
-        </router-link>
+        </router-link>-->
+        <label
+          class="shadow-sm btn btn-secondary"
+          :class="{active: display === 'current'}"
+          @click="display = 'current'"
+        >
+          <input type="radio" checked> Heute
+        </label>
 
-        <router-link
+        <!-- <router-link
           to="?q=next"
           tag="label"
           exact-active-class="active"
           class="shadow-sm btn btn-secondary"
         >
           <input type="radio" checked> Folgend
-        </router-link>
+        </router-link>-->
+        <label
+          class="shadow-sm btn btn-secondary"
+          :class="{active: display === 'next'}"
+          @click="display = 'next'"
+        >
+          <input type="radio" checked> Folgend
+        </label>
       </div>
 
       <div
@@ -40,6 +54,8 @@
       </div>
 
       <VplanTable :vplanData="vplanData"></VplanTable>
+
+      <small class="font-weight-light font-italic">Version 0.1.1</small>
     </div>
   </div>
 </template>
@@ -87,7 +103,10 @@ const authenticate = async (tries = 1) => {
 
     await axios.get('', { auth })
 
-    Cookies.set(cookieName, auth.password, { expires: 120, /* FIXME */ secure: true })
+    Cookies.set(cookieName, auth.password, {
+      expires: 120,
+      /* FIXME */ secure: true
+    })
     axios.defaults.auth = auth
 
     return true
@@ -113,12 +132,13 @@ export default {
   data () {
     return {
       authSuccess: undefined,
-      vplanData: undefined
+      vplanData: undefined,
+      display: undefined
     }
   },
   methods: {
     async retreiveVplan () {
-      const vplanUrl = `${this.$route.query.q}/${this.type}.json`
+      const vplanUrl = `${this.display}/${this.type}.json`
       console.debug(vplanUrl)
 
       if (navigator.onLine) {
@@ -128,6 +148,7 @@ export default {
 
           return vplanData
         } catch {
+          await vplanCache.setItem(vplanUrl, null)
           return null
         }
       } else {
@@ -148,26 +169,39 @@ export default {
       await axios.get('')
     } catch (error) {
       if (navigator.onLine) {
-        if (confirm('Daten konnten nicht geladen werden. \nSeite zurücksetzen?')) {
+        if (
+          confirm('Daten konnten nicht geladen werden. \nSeite zurücksetzen?')
+        ) {
           Cookies.remove(cookieName)
           location.reload(true)
         }
       }
     }
 
-    if (!this.$route.query.q) {
-      // check if its after 12 p.m.
-      const queueDay = (new Date().getHours() < 12) ? 'current' : 'next'
-      this.$router.push({ query: { q: queueDay } })
+    // check if its after 12 p.m.
+    const queueDay = new Date().getHours() < 12 ? 'current' : 'next'
+    this.display = queueDay
+
+    if (['current', 'next'].includes(this.$route.query.d)) {
+      this.display = this.$route.query.d
+      this.$router.replace({ query: { d: undefined } })
     }
 
-    window.addEventListener('online', _ => this.$refs.connectivity_badge.info_online())
-    window.addEventListener('offline', _ => this.$refs.connectivity_badge.warn_offline())
-
-    await this.updateVplan()
+    window.addEventListener('online', _ =>
+      this.$refs.connectivity_badge.info_online()
+    )
+    window.addEventListener('offline', _ =>
+      this.$refs.connectivity_badge.warn_offline()
+    )
   },
   watch: {
     $route (to, from) {
+      if (['current', 'next'].includes(this.$route.query.d)) {
+        this.display = this.$route.query.d
+        this.$router.replace({ query: { d: undefined } })
+      }
+    },
+    display () {
       this.authSuccess && this.updateVplan()
     }
   }
