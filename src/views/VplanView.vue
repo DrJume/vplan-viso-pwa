@@ -184,8 +184,8 @@ export default {
 
     if (['current', 'next'].includes(this.$route.query.d)) {
       this.display = this.$route.query.d
-      this.$router.replace({ query: { d: undefined } })
     }
+    this.$router.replace({ query: undefined }) //TODO
 
     window.addEventListener('online', _ =>
       this.$refs.connectivity_badge.info_online()
@@ -198,8 +198,8 @@ export default {
     $route (to, from) {
       if (['current', 'next'].includes(this.$route.query.d)) {
         this.display = this.$route.query.d
-        this.$router.replace({ query: { d: undefined } })
       }
+      this.$router.replace({ query: undefined }) //TODO
     },
     display () {
       this.authSuccess && this.updateVplan()
