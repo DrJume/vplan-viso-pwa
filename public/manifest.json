@@ -1,6 +1,6 @@
 {
-  "name": "MANOS Vplan",
-  "short_name": "Vplan",
+  "name": "MANOS Vertretungsplan",
+  "short_name": "V-Plan",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",

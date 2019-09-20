@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="css" scoped>
 #app {
   text-align: center;
 }

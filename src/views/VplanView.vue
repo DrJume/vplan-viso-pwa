@@ -43,7 +43,7 @@
 
       <VplanTable :vplanData="vplanData"></VplanTable>
 
-      <small class="font-weight-light font-italic">Version 0.2.1</small>
+      <small class="font-weight-light font-italic">Version 0.2.2</small>
     </div>
   </div>
 </template>

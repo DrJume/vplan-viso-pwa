@@ -66,7 +66,7 @@
 }
 
 .blink {
-  animation: blink 2.5s ease-in-out 2;
+  animation: blink 1.5s ease-in-out 2;
 }
 </style>
 
