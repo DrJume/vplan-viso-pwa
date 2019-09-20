@@ -3,34 +3,18 @@
     <ConnectivityBadge ref="connectivity_badge"></ConnectivityBadge>
     <div class="pt-4">
       <div class="btn-group btn-group-toggle pb-4">
-        <!-- <router-link
-          to="?q=current"
-          tag="label"
-          exact-active-class="active"
-          class="shadow-sm btn btn-secondary"
-        >
-          <input type="radio" checked> Heute
-        </router-link>-->
         <label
           class="shadow-sm btn btn-secondary"
           :class="{active: display === 'current'}"
-          @click="display = 'current'"
+          @click.prevent="updateVplan('current')"
         >
           <input type="radio" checked> Heute
         </label>
 
-        <!-- <router-link
-          to="?q=next"
-          tag="label"
-          exact-active-class="active"
-          class="shadow-sm btn btn-secondary"
-        >
-          <input type="radio" checked> Folgend
-        </router-link>-->
         <label
           class="shadow-sm btn btn-secondary"
           :class="{active: display === 'next'}"
-          @click="display = 'next'"
+          @click.prevent="updateVplan('next')"
         >
           <input type="radio" checked> Folgend
         </label>
@@ -40,12 +24,16 @@
         v-if="this.authSuccess === false"
         class="alert alert-danger"
         role="alert"
-      >Dieser Inhalt ist passwortgeschützt.</div>
+      >
+        Dieser Inhalt ist passwortgeschützt.
+      </div>
       <div
         v-else-if="this.vplanData === null"
         class="alert alert-secondary"
         role="alert"
-      >Vertretungsplan folgt demnächst.</div>
+      >
+        Vertretungsplan folgt demnächst.
+      </div>
 
       <div v-else-if="this.vplanData === undefined" class="d-flex justify-content-center m-5">
         <div class="spinner-grow" style="width: 4rem; height: 4rem;" role="status">
@@ -55,7 +43,7 @@
 
       <VplanTable :vplanData="vplanData"></VplanTable>
 
-      <small class="font-weight-light font-italic">Version 0.2.0</small>
+      <small class="font-weight-light font-italic">Version 0.2.1</small>
     </div>
   </div>
 </template>
@@ -72,7 +60,7 @@ import VplanTable from '@/components/VplanTable.vue'
 import ConnectivityBadge from '@/components/ConnectivityBadge.vue'
 
 const vplanCache = localForage.createInstance({
-  name: 'manos-vplan'
+  name: 'vplan-web'
 })
 
 axios.defaults.baseURL = 'https://manos-dresden.de/vplan/upload/'
@@ -82,7 +70,7 @@ let auth = {
   password: ''
 }
 
-const authenticate = async (tries = 1) => {
+const authenticate = async (failed = 0) => {
   if (Cookies.get(cookieName)) {
     auth.password = Cookies.get(cookieName)
     axios.defaults.auth = auth
@@ -90,8 +78,9 @@ const authenticate = async (tries = 1) => {
     return true
   }
 
-  const input = prompt('MANOS Vertretungsplan Passwort', '')
+  const input = prompt(`${failed > 0 ? 'Falsches Passwort. ' : 'MANOS Vertretungsplan Passwort'}`, '')
   if (input === null) return false
+  if (!input) return authenticate(failed + 1)
   auth.password = input
 
   try {
@@ -101,7 +90,7 @@ const authenticate = async (tries = 1) => {
       return false
     }
 
-    await axios.get('', { auth })
+    await axios.get('test.txt', { auth })
 
     Cookies.set(cookieName, auth.password, {
       expires: 120,
@@ -111,12 +100,12 @@ const authenticate = async (tries = 1) => {
 
     return true
   } catch {
-    if (tries >= 3) {
+    if (failed >= 2) {
       alert('Zu viele Fehleingaben!')
       return false
     }
 
-    return authenticate(tries + 1)
+    return authenticate(failed + 1)
   }
 }
 
@@ -137,8 +126,8 @@ export default {
     }
   },
   methods: {
-    async retreiveVplan () {
-      const vplanUrl = `${this.display}/${this.type}.json`
+    async retreiveVplan (queue) {
+      const vplanUrl = `${queue}/${this.type}.json`
       console.debug(vplanUrl)
 
       if (navigator.onLine) {
@@ -149,6 +138,7 @@ export default {
           return vplanData
         } catch {
           await vplanCache.setItem(vplanUrl, null)
+
           return null
         }
       } else {
@@ -157,16 +147,22 @@ export default {
         return vplanCache.getItem(vplanUrl)
       }
     },
-    async updateVplan () {
-      this.vplanData = await this.retreiveVplan()
+    async updateVplan (queue) {
+      this.vplanData = undefined
+
+      this.authSuccess = await authenticate()
+      if (!this.authSuccess) return
+
+      this.display = queue
+      this.vplanData = await this.retreiveVplan(queue)
     }
   },
-  async created () {
+  async mounted () {
     this.authSuccess = await authenticate()
     if (!this.authSuccess) return
 
     try {
-      await axios.get('')
+      await axios.get('test.txt')
     } catch (error) {
       if (navigator.onLine) {
         if (
@@ -178,9 +174,9 @@ export default {
       }
     }
 
-    // check if its after 12 p.m.
-    const queueDay = new Date().getHours() < 12 ? 'current' : 'next'
-    this.display = queueDay
+    const hours = new Date().getHours()
+    const queueDay = hours < 12 ? 'current' : 'next'
+    this.updateVplan(queueDay)
 
     if (['current', 'next'].includes(this.$route.query.d)) {
       this.display = this.$route.query.d
@@ -200,9 +196,6 @@ export default {
         this.display = this.$route.query.d
       }
       this.$router.replace({ query: undefined }) // TODO
-    },
-    display () {
-      this.authSuccess && this.updateVplan()
     }
   }
 }

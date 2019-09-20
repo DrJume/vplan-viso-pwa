@@ -7,27 +7,15 @@
     </div>
 
     <div v-if="vplanData._type === 'students'">
-      <table class="shadow-sm table table-hover table-striped table-sm table-bordered">
+      <table class="shadow-sm table table-hover table-striped table-sm table-bordered table-responsive-sm">
         <thead>
           <tr>
-            <th>
-              <span>Klasse</span>
-            </th>
-            <th>
-              <span>Stunde</span>
-            </th>
-            <th>
-              <span>Fach</span>
-            </th>
-            <th>
-              <span>Lehrer</span>
-            </th>
-            <th>
-              <span>Raum</span>
-            </th>
-            <th>
-              <span>Info</span>
-            </th>
+            <th><span>Klasse</span></th>
+            <th><span>Stunde</span></th>
+            <th><span>Fach</span></th>
+            <th><span>Lehrer</span></th>
+            <th><span>Raum</span></th>
+            <th><span>Info</span></th>
           </tr>
         </thead>
         <tbody>
@@ -42,33 +30,17 @@
       </table>
     </div>
     <div v-else-if="vplanData._type === 'teachers'">
-      <table class="table table-hover table-striped table-sm table-bordered">
+      <table class="table table-hover table-striped table-sm table-bordered table-responsive-sm">
         <thead>
           <tr>
-            <th>
-              <span>Lehrer</span>
-            </th>
-            <th>
-              <span>Stunde</span>
-            </th>
-            <th>
-              <span>Klasse/Kurs</span>
-            </th>
-            <th>
-              <span>Fach neu</span>
-            </th>
-            <th>
-              <span>Raum neu</span>
-            </th>
-            <th>
-              <span>für Fach</span>
-            </th>
-            <th>
-              <span>für Lehrer</span>
-            </th>
-            <th>
-              <span>Info</span>
-            </th>
+            <th><span>Lehrer</span></th>
+            <th><span>Stunde</span></th>
+            <th><span>Klasse/Kurs</span></th>
+            <th><span>Fach neu</span></th>
+            <th><span>Raum neu</span></th>
+            <th><span>für Fach</span></th>
+            <th><span>für Lehrer</span></th>
+            <th><span>Info</span></th>
           </tr>
         </thead>
         <tbody>
@@ -142,12 +114,6 @@ export default {
   },
   props: {
     vplanData: Object
-  },
-  methods: {
-    load (vplan) {
-      console.debug(vplan)
-      this.vplanData = vplan
-    }
   }
 }
 </script>
