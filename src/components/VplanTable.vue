@@ -6,7 +6,7 @@
       <p class="mt-2 lead font-italic">{{ vplanData.info }}</p>
     </div>
 
-    <div v-if="vplanData.type === 'students'">
+    <div v-if="vplanData._type === 'students'">
       <table class="shadow-sm table table-hover table-striped table-sm table-bordered">
         <thead>
           <tr>
@@ -31,7 +31,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(entry, indexEntry) in vplanData.body" :key="indexEntry">
+          <tr v-for="entry in vplanData.body" :key="entry._id">
             <td
               v-for="(column, indexColumn) in students_columns"
               :key="indexColumn"
@@ -41,7 +41,7 @@
         </tbody>
       </table>
     </div>
-    <div v-else-if="vplanData.type === 'teachers'">
+    <div v-else-if="vplanData._type === 'teachers'">
       <table class="table table-hover table-striped table-sm table-bordered">
         <thead>
           <tr>
@@ -72,7 +72,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(entry, index) in vplanData.body" :key="index">
+          <tr v-for="entry in vplanData.body" :key="entry._id">
             <td
               v-for="(column, indexColumn) in teachers_columns"
               :key="indexColumn"
