@@ -55,7 +55,7 @@
 
       <VplanTable :vplanData="vplanData"></VplanTable>
 
-      <small class="font-weight-light font-italic">Version 0.1.1</small>
+      <small class="font-weight-light font-italic">Version 0.2.0</small>
     </div>
   </div>
 </template>
@@ -185,7 +185,7 @@ export default {
     if (['current', 'next'].includes(this.$route.query.d)) {
       this.display = this.$route.query.d
     }
-    this.$router.replace({ query: undefined }) //TODO
+    this.$router.replace({ query: undefined }) // TODO
 
     window.addEventListener('online', _ =>
       this.$refs.connectivity_badge.info_online()
@@ -199,7 +199,7 @@ export default {
       if (['current', 'next'].includes(this.$route.query.d)) {
         this.display = this.$route.query.d
       }
-      this.$router.replace({ query: undefined }) //TODO
+      this.$router.replace({ query: undefined }) // TODO
     },
     display () {
       this.authSuccess && this.updateVplan()

@@ -1,6 +1,6 @@
 {
   "name": "vplan-web",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -8,7 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.19.0",
     "bootstrap": "^4.2.1",
     "jquery": "^3.3.1",
     "js-cookie": "^2.2.0",
