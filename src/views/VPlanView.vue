@@ -206,6 +206,7 @@ export default {
   watch: {
     $route (to, from) {
       this.checkURLOptions()
+      this.updateVplan(this.display)
     }
   }
 }

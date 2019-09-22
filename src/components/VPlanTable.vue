@@ -2,8 +2,32 @@
   <div v-if="vplanData">
     <div class="rounded shadow-sm p-1 mb-3">
       <h3 class="my-0">{{ vplanData.head.title }}</h3>
+
       <small class="font-weight-light">Letzte Änderung am: {{ vplanData.head.created }}</small>
+
       <p class="mt-2 lead font-italic">{{ vplanData.info }}</p>
+
+      <div class="aux mb-3 px-5" v-if="vplanData._type === 'teachers'">
+        <strong>Abwesend:</strong>
+        <br>
+        {{ vplanData.head.missing.teachers }}
+      </div>
+
+      <div class="aux" v-if="vplanData._type === 'teachers'">
+        <ul class="list-unstyled">
+          <strong>Aufsichten:</strong>
+          <li
+            v-for="(supervision, indexSupervision) in vplanData.supervision"
+            :key="indexSupervision"
+          >
+            <span
+              class="fancy-arrow"
+              v-html="makeArrowsFancy(supervision)"
+            ></span>
+          </li>
+        </ul>
+      </div>
+
     </div>
 
     <div>
@@ -53,6 +77,11 @@ table {
   overflow-wrap: break-word;
 }
 
+.fancy-arrow ::v-deep svg {
+  width: 18px;
+  height: 18px;
+}
+
 @media (max-width: 767px) {
   th > span {
     writing-mode: vertical-lr;
@@ -64,10 +93,16 @@ table {
   }
 }
 
-@media (max-width: 575px) {
-  table {
+@media (max-width: 460px) {
+  table, .aux {
     font-size: 0.8rem;
   }
+
+  .fancy-arrow ::v-deep svg {
+    width: 14px;
+    height: 14px;
+  }
+
 }
 
 </style>
@@ -102,6 +137,12 @@ export default {
           'info'
         ]
       }
+    }
+  },
+
+  methods: {
+    makeArrowsFancy (supervision) {
+      return supervision.replace(/-->/g, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 2 24 24" fill="#212529"><path d="M16 8v-4l8 8-8 8v-4h-16l8-8h8z"/></svg>')
     }
   }
 }
