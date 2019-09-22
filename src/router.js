@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Home from './views/Home.vue'
-import VplanView from './views/VplanView.vue'
+import VPlanView from './views/VPlanView.vue'
 
 Vue.use(Router)
 
@@ -15,12 +15,12 @@ export default new Router({
     },
     {
       path: '/schueler/',
-      component: VplanView,
+      component: VPlanView,
       props: { type: 'students' }
     },
     {
       path: '/lehrer/',
-      component: VplanView,
+      component: VPlanView,
       props: { type: 'teachers' }
     },
     {

@@ -41,7 +41,7 @@
         </div>
       </div>
 
-      <VplanTable :vplanData="vplanData"></VplanTable>
+      <VPlanTable :vplanData="vplanData"></VPlanTable>
 
       <small class="font-weight-light font-italic">Version 0.2.3</small>
     </div>
@@ -56,7 +56,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import localForage from 'localforage'
 
-import VplanTable from '@/components/VplanTable.vue'
+import VPlanTable from '@/components/VPlanTable.vue'
 import ConnectivityBadge from '@/components/ConnectivityBadge.vue'
 
 const vplanCache = localForage.createInstance({
@@ -110,10 +110,10 @@ const authenticate = async (failed = 0) => {
 }
 
 export default {
-  name: 'VplanView',
+  name: 'VPlanView',
 
   components: {
-    VplanTable,
+    VPlanTable,
     ConnectivityBadge
   },
 

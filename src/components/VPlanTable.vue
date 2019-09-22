@@ -74,7 +74,7 @@ table {
 
 <script>
 export default {
-  name: 'VplanTable',
+  name: 'VPlanTable',
 
   props: {
     vplanData: Object
