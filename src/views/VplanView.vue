@@ -141,7 +141,7 @@ export default {
 
           return vplanData
         } catch {
-          await vplanCache.setItem(vplanUrl, null)
+          await vplanCache.removeItem(vplanUrl)
 
           return null
         }
