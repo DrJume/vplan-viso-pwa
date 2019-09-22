@@ -43,7 +43,7 @@
 
       <VplanTable :vplanData="vplanData"></VplanTable>
 
-      <small class="font-weight-light font-italic">Version 0.2.2</small>
+      <small class="font-weight-light font-italic">Version 0.2.3</small>
     </div>
   </div>
 </template>
@@ -94,14 +94,14 @@ const authenticate = async (failed = 0) => {
 
     Cookies.set(cookieName, auth.password, {
       expires: 120,
-      /* FIXME */ secure: true
+      secure: true /* FIXME: disable only during development */
     })
     axios.defaults.auth = auth
 
     return true
   } catch {
     if (failed >= 2) {
-      alert('Zu viele Fehleingaben!')
+      alert('Zu viele Falscheingaben!')
       return false
     }
 
@@ -111,20 +111,24 @@ const authenticate = async (failed = 0) => {
 
 export default {
   name: 'VplanView',
+
   components: {
     VplanTable,
     ConnectivityBadge
   },
+
   props: {
     type: String
   },
+
   data () {
     return {
       authSuccess: undefined,
       vplanData: undefined,
-      display: undefined
+      display: ''
     }
   },
+
   methods: {
     async retreiveVplan (queue) {
       const vplanUrl = `${queue}/${this.type}.json`
@@ -147,6 +151,7 @@ export default {
         return vplanCache.getItem(vplanUrl)
       }
     },
+
     async updateVplan (queue) {
       this.vplanData = undefined
 
@@ -155,8 +160,18 @@ export default {
 
       this.display = queue
       this.vplanData = await this.retreiveVplan(queue)
+    },
+
+    checkURLOptions () {
+      if (['current', 'next'].includes(this.$route.query.d)) {
+        this.display = this.$route.query.d
+      }
+      if (Object.keys(this.$route.query).length !== 0) {
+        this.$router.replace({ query: {} })
+      }
     }
   },
+
   async mounted () {
     this.authSuccess = await authenticate()
     if (!this.authSuccess) return
@@ -178,10 +193,7 @@ export default {
     const queueDay = hours < 12 ? 'current' : 'next'
     this.updateVplan(queueDay)
 
-    if (['current', 'next'].includes(this.$route.query.d)) {
-      this.display = this.$route.query.d
-    }
-    this.$router.replace({ query: undefined }) // TODO
+    this.checkURLOptions()
 
     window.addEventListener('online', _ =>
       this.$refs.connectivity_badge.info_online()
@@ -190,12 +202,10 @@ export default {
       this.$refs.connectivity_badge.warn_offline()
     )
   },
+
   watch: {
     $route (to, from) {
-      if (['current', 'next'].includes(this.$route.query.d)) {
-        this.display = this.$route.query.d
-      }
-      this.$router.replace({ query: undefined }) // TODO
+      this.checkURLOptions()
     }
   }
 }
