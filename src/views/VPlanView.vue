@@ -43,7 +43,7 @@
 
       <VPlanTable :vplanData="vplanData"></VPlanTable>
 
-      <small class="font-weight-light font-italic">Version 0.2.4</small>
+      <small class="font-weight-light font-italic">Version {{ version }}</small>
     </div>
   </div>
 </template>
@@ -52,6 +52,8 @@
 </style>
 
 <script>
+import pkg from '@/../package.json'
+
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import localForage from 'localforage'
@@ -126,6 +128,12 @@ export default {
       authSuccess: undefined,
       vplanData: undefined,
       display: ''
+    }
+  },
+
+  computed: {
+    version () {
+      return pkg.version
     }
   },
 

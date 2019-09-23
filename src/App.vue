@@ -15,7 +15,7 @@ export default {
       this.isDarkMode = query.matches
       console.log(`Dark mode is ${this.isDarkMode ? '🌒 on' : '☀️ off'}.`)
 
-      this.isDarkMode ? document.documentElement.classList.add('bg-dark') : document.documentElement.classList.remove('bg-dark')
+      this.isDarkMode ? document.body.classList.add('bg-dark') : document.body.classList.remove('bg-dark')
     }
 
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
@@ -27,7 +27,7 @@ export default {
 
 <style lang="scss">
 
-.make-all-text-light * {
+.make-all-text-light :not(.alert) {
   color: var(--light);
 }
 
