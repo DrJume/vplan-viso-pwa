@@ -31,7 +31,7 @@
     </div>
 
     <div>
-      <table class="shadow-sm table table-hover table-striped table-sm table-bordered table-responsive-md">
+      <table class="shadow-sm table table-hover table-striped table-sm table-bordered table-responsive-md" :class="{'table-dark': isDarkMode}">
         <thead>
           <tr>
             <slot v-if="vplanData._type === 'students'">
@@ -80,6 +80,7 @@ table {
 .fancy-arrow ::v-deep svg {
   width: 18px;
   height: 18px;
+  fill: currentColor;
 }
 
 @media (max-width: 767px) {
@@ -142,7 +143,7 @@ export default {
 
   methods: {
     makeArrowsFancy (supervision) {
-      return supervision.replace(/-->/g, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 2 24 24" fill="#212529"><path d="M16 8v-4l8 8-8 8v-4h-16l8-8h8z"/></svg>')
+      return supervision.replace(/-->/g, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 2 24 24"><path d="M16 8v-4l8 8-8 8v-4h-16l8-8h8z"/></svg>')
     }
   }
 }
