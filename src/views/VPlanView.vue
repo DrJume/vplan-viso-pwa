@@ -5,18 +5,18 @@
       <div class="btn-group btn-group-toggle pb-4">
         <label
           class="shadow-sm btn btn-secondary"
-          :class="{active: display === 'current'}"
+          :class="display === 'current' ? ['active'] : ['text-blur']"
           @click.prevent="updateVplan('current')"
         >
-          <input type="radio" checked> Heute
+          <input type="radio"> Heute
         </label>
 
         <label
           class="shadow-sm btn btn-secondary"
-          :class="{active: display === 'next'}"
+          :class="display === 'next' ? ['active'] : ['text-blur']"
           @click.prevent="updateVplan('next')"
         >
-          <input type="radio" checked> Folgend
+          <input type="radio"> Folgend
         </label>
       </div>
 
@@ -48,7 +48,12 @@
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped lang="css">
+
+.text-blur {
+  color: rgba(255,255,255,0.85) !important;
+}
+
 </style>
 
 <script>

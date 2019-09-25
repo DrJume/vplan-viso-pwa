@@ -62,6 +62,7 @@
               :key="indexColumn"
               :class="{
                 'text-danger' : entry.changed.includes(column),
+                'text-nowrap' : column === 'lesson'
               }"
             >{{ entry[column] }}</td>
           </tr>
