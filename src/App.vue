@@ -31,6 +31,12 @@ export default {
   color: var(--light);
 }
 
+@media (min-width: 576px) {
+  body {
+    overflow: overlay;
+  }
+}
+
 .app {
   text-align: center;
 

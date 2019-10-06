@@ -92,6 +92,7 @@ table {
     padding: 0.4rem 0 0.4rem 0;
     vertical-align: bottom;
     white-space: nowrap;
+    min-width: 1.2rem; /* Fix Safari vertical text width collapse issue and generally better centering */
   }
 }
 
