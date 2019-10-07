@@ -43,4 +43,14 @@ export default {
   // @import "~bootstrap/scss/bootstrap.scss";
 }
 
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.1s linear;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
 </style>

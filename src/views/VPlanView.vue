@@ -27,23 +27,10 @@
       >
         Dieser Inhalt ist passwortgeschützt.
       </div>
-      <div
-        v-else-if="this.vplanData === null"
-        class="alert alert-secondary"
-        role="alert"
-      >
-        Vertretungsplan folgt demnächst.
-      </div>
 
-      <div v-else-if="this.vplanData === undefined" class="d-flex justify-content-center m-5">
-        <div class="spinner-grow" style="width: 4rem; height: 4rem;" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-      </div>
+      <VPlanTable v-else :vplanData="vplanData"></VPlanTable>
 
-      <VPlanTable :vplanData="vplanData"></VPlanTable>
-
-      <small class="font-weight-light font-italic">Version {{ version }}</small>
+      <small class="font-weight-light font-italic">v{{ version }}</small>
     </div>
   </div>
 </template>
@@ -51,7 +38,7 @@
 <style scoped lang="css">
 
 .text-blur {
-  color: rgba(255,255,255,0.85) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
 }
 
 </style>
@@ -67,20 +54,38 @@ import VPlanTable from '@/components/VPlanTable.vue'
 import ConnectivityBadge from '@/components/ConnectivityBadge.vue'
 
 const vplanCache = localForage.createInstance({
-  name: 'vplan-web'
+  name: 'MANOS V-Plan',
+  version: 1.0,
+  storeName: 'vplan_cache',
+  description: 'Caches VPlan files in JSON format locally'
 })
 
-axios.defaults.baseURL = 'https://manos-dresden.de/vplan/upload/'
-const cookieName = 'vplan_passwd'
+const vplanPasswdCookieName = 'vplan_passwd'
 let auth = {
   username: 'manos',
   password: ''
 }
 
+axios.defaults.baseURL = 'https://manos-dresden.de/vplan/upload/'
+
 const authenticate = async (failed = 0) => {
-  if (Cookies.get(cookieName)) {
-    auth.password = Cookies.get(cookieName)
+  if (Cookies.get(vplanPasswdCookieName)) {
+    auth.password = Cookies.get(vplanPasswdCookieName)
     axios.defaults.auth = auth
+
+    if (navigator.onLine) {
+      try {
+        await axios.get('test.txt')
+      } catch (error) {
+        if (
+          confirm('Daten konnten nicht geladen werden.\nSeite zurücksetzen?')
+        ) {
+          Cookies.remove(vplanPasswdCookieName)
+
+          location.reload(true)
+        }
+      }
+    }
 
     return true
   }
@@ -99,7 +104,7 @@ const authenticate = async (failed = 0) => {
 
     await axios.get('test.txt', { auth })
 
-    Cookies.set(cookieName, auth.password, {
+    Cookies.set(vplanPasswdCookieName, auth.password, {
       expires: 120,
       secure: true /* FIXME: disable only during development */
     })
@@ -188,19 +193,6 @@ export default {
   async mounted () {
     this.authSuccess = await authenticate()
     if (!this.authSuccess) return
-
-    try {
-      await axios.get('test.txt')
-    } catch (error) {
-      if (navigator.onLine) {
-        if (
-          confirm('Daten konnten nicht geladen werden. \nSeite zurücksetzen?')
-        ) {
-          Cookies.remove(cookieName)
-          location.reload(true)
-        }
-      }
-    }
 
     const hours = new Date().getHours()
     const queueDay = hours < 12 ? 'current' : 'next'
