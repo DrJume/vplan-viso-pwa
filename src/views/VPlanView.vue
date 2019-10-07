@@ -53,6 +53,12 @@ import localForage from 'localforage'
 import VPlanTable from '@/components/VPlanTable.vue'
 import ConnectivityBadge from '@/components/ConnectivityBadge.vue'
 
+try {
+  indexedDB.deleteDatabase('vplan-web')
+} catch (error) {
+
+}
+
 const vplanCache = localForage.createInstance({
   name: 'MANOS V-Plan',
   version: 1.0,
