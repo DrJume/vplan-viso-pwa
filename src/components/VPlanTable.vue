@@ -31,8 +31,12 @@
     </div>
 
     <div>
-      <table class="shadow-sm table table-hover table-striped table-sm table-bordered table-responsive-md" :class="{'table-dark': isDarkMode}">
-        <thead>
+      <table
+        ref="table"
+        class="shadow-sm table table-hover table-striped table-sm table-bordered table-responsive-md"
+        :class="{'table-dark': isDarkMode}"
+      >
+        <thead ref="tableHead">
           <tr>
             <slot v-if="vplanData._type === 'students'">
               <th><span>Klasse</span></th>
@@ -72,7 +76,7 @@
   </div>
 </template>
 
-<style scoped type="scss">
+<style scoped type="css">
 
 table {
   overflow-wrap: break-word;
@@ -140,6 +144,16 @@ export default {
           'info'
         ]
       }
+    }
+  },
+
+  mounted () {
+    const tableViewportWidth = this.$refs.table.clientWidth
+    const tableContentWidth = this.$refs.tableHead.clientWidth
+
+    // Make table full width when too narrow
+    if (tableContentWidth < tableViewportWidth) {
+      this.$refs.table.classList.remove('table-responsive-md')
     }
   },
 
