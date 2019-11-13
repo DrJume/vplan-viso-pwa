@@ -24,7 +24,7 @@ export default {
 #nav {
   display: flex;
   flex-direction: row;
-  height: calc(100vh - 1.5rem);
+  height: calc(100vh - 2 * 1.5rem);
   justify-content: space-between;
   align-items: center;
 }
