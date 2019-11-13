@@ -1,25 +1,43 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Home from './views/Home.vue'
+import ChooseUserType from './views/ChooseUserType.vue'
+import About from './views/About.vue'
+import Settings from './views/Settings.vue'
 import VPlanView from './views/VPlanView.vue'
 
 Vue.use(Router)
 
 export default new Router({
+  mode: 'hash',
   base: '/vplan/',
   routes: [
     {
       path: '/',
-      component: Home
+      name: 'start',
+      component: ChooseUserType
+    },
+    {
+      path: '/einstellungen',
+      name: 'settings',
+      component: Settings,
+      meta: { backMenuOption: true }
+    },
+    {
+      path: '/ueber',
+      name: 'about',
+      component: About,
+      meta: { backMenuOption: true }
     },
     {
       path: '/schueler/',
+      name: 'students',
       component: VPlanView,
       props: { type: 'students' }
     },
     {
       path: '/lehrer/',
+      name: 'teachers',
       component: VPlanView,
       props: { type: 'teachers' }
     },

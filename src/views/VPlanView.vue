@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="text-center">
     <ConnectivityBadge ref="connectivity_badge"></ConnectivityBadge>
-    <div class="pt-4">
+    <div>
       <div class="btn-group btn-group-toggle pb-4">
         <label
           class="shadow-sm btn btn-secondary"

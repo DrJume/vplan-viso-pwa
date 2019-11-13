@@ -35,7 +35,7 @@
         <table
           ref="table"
           class="shadow-sm table table-hover table-striped table-sm table-bordered table-responsive-md"
-          :class="{'table-dark': isDarkMode}"
+          :class="{'table-dark': $isDarkMode}"
         >
           <thead ref="tableHead">
             <tr>

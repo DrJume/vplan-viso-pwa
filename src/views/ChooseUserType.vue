@@ -1,15 +1,14 @@
 <template>
   <div id="nav">
     <router-link
-      to="/schueler/"
+      :to="{ name: 'students' }"
       tag="button"
-      active-class="active"
       class="btn btn-primary btn-lg"
     >Schüler</router-link>
+
     <router-link
-      to="/lehrer/"
+      :to="{ name: 'teachers' }"
       tag="button"
-      active-class="active"
       class="btn btn-primary btn-lg"
     >Lehrer</router-link>
   </div>
@@ -25,8 +24,7 @@ export default {
 #nav {
   display: flex;
   flex-direction: row;
-  padding-top: 25px;
-  height: 100vh;
+  height: calc(100vh - 1.5rem);
   justify-content: space-between;
   align-items: center;
 }
