@@ -53,10 +53,6 @@ export default {
   }
 }
 
-body {
-  transition: background-color 1s ease;
-}
-
 .app {
   // @import "~bootstrap/scss/bootstrap.scss";
 }
