@@ -40,7 +40,7 @@ export default {
     updateDarkMode (e) {
       setTimeout(() => {
         this.$isDarkMode = e.target.checked
-      }, 250)
+      }, 150)
     }
   }
 }

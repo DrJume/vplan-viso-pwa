@@ -1,5 +1,5 @@
 <template>
-  <div class="app" :class="{'bg-dark': $isDarkMode, 'make-all-text-light': $isDarkMode}">
+  <div class="app" :class="{'make-all-text-light': $isDarkMode}">
     <div class="container position-relative pt-4">
       <MenuDropdown v-if="$route.name !== 'start'" class="app-menu position-absolute"></MenuDropdown>
       <router-view/>
@@ -51,6 +51,10 @@ export default {
   body {
     overflow: overlay;
   }
+}
+
+body {
+  transition: background-color 1s ease;
 }
 
 .app {
