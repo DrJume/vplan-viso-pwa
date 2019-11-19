@@ -1,50 +1,86 @@
 <template>
-  <div class="app" :class="{'make-all-text-light': $isDarkMode}">
-    <div class="container position-relative pt-4">
+  <div>
+    <div id="app" class="container position-relative pt-4">
       <MenuDropdown v-if="$route.name !== 'start'" class="app-menu position-absolute"></MenuDropdown>
-      <router-view/>
+      <transition name="fade" mode="out-in" appear>
+        <router-view/>
+      </transition>
     </div>
+    <!-- <iOSPWAPrompt/> -->
   </div>
 </template>
 
 <script>
+// import iOSPWAPrompt from '@/components/iOS-PWA-Prompt.vue'
+
 import MenuDropdown from '@/components/MenuDropdown.vue'
 
 export default {
   name: 'App',
   components: {
     MenuDropdown
-  },
-
-  created () {
-    const setDarkMode = (val) => {
-      this.$isDarkMode = val
-      console.log(`Dark mode is ${val ? '🌒 on' : '☀️ off'}.`)
-    }
-
-    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    setDarkMode(darkModeMediaQuery.matches)
-
-    darkModeMediaQuery.addListener((e) => setDarkMode(e.matches))
-  },
-
-  watch: {
-    $isDarkMode: (isDarkMode) => {
-      isDarkMode ? document.body.classList.add('bg-dark') : document.body.classList.remove('bg-dark')
-    }
   }
 }
 </script>
 
 <style lang="scss">
 
+@import "~bootstrap/scss/bootstrap.scss";
+
+html.dark-theme {
+  background-color: var(--dark);
+
+  body {
+    background-color: var(--dark);
+
+    #app *:not(.alert):not(.custom-control-label) {
+      color: var(--light);
+    }
+
+    table {
+      @extend .table-dark;
+    }
+
+    .dropdown-menu {
+      background-color: var(--dark);
+      border-color: #454d55;
+
+      .dropdown-divider {
+        border-color: rgba(255,255,255,0.07) !important;
+      }
+
+      .dropdown-item {
+        &:hover, &:focus {
+          background-color: rgba(255,255,255,0.08) !important;
+          color: var(--light);
+        }
+
+        &:active {
+          background-color: var(--blue) !important;
+        }
+      }
+    }
+
+    .jumbotron {
+      background-color: var(--secondary);
+    }
+
+    textarea {
+      &:focus {
+        color: currentColor;
+      }
+      &:disabled {
+        background-color: var(--gray) !important;
+      }
+      background-color: lighten($secondary, 10%) !important;
+      border-color: darken($secondary, 7%);
+    }
+  }
+}
+
 .app-menu {
   padding-right: inherit;
   right: 0;
-}
-
-.make-all-text-light :not(.alert) {
-  color: var(--light);
 }
 
 @media (min-width: 576px) {
@@ -53,7 +89,7 @@ export default {
   }
 }
 
-.app {
+#app {
   // @import "~bootstrap/scss/bootstrap.scss";
 }
 

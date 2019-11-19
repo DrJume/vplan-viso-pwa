@@ -1,6 +1,6 @@
 <template>
   <!-- eslint-disable-next-line -->
-  <span :class="className" v-html="getSVG()" />
+  <span v-html="getSVG()" />
 </template>
 
 <script>
@@ -17,7 +17,7 @@ export default {
       type: Number,
       default: 1
     },
-    className: {
+    svgClass: {
       type: String,
       default: ''
     },
@@ -31,7 +31,7 @@ export default {
       return octicons[this.icon].toSVG({
         width: (octicons[this.icon].width * this.scale),
         height: (octicons[this.icon].height * this.scale),
-        class: ' ',
+        class: this.svgClass ? this.svgClass : ' ',
         'aria-label': this.label
       })
     }

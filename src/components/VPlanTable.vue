@@ -1,100 +1,78 @@
 <template>
-  <transition name="fade" mode="out-in" appear @enter="tableResponsivenessNeededCheck">
-    <div v-if="vplanData" key="vplanColumn">
-      <div class="rounded shadow-sm p-1 mb-3">
-        <h3 class="my-0">{{ vplanData.head.title }}</h3>
+  <div v-if="vplanData">
+    <div class="rounded shadow-sm p-1 mb-3">
+      <h3 class="my-0">{{ vplanData.head.title }}</h3>
 
-        <small class="font-weight-light">Letzte Änderung am: {{ vplanData.head.created }}</small>
+      <small class="font-weight-light">Letzte Änderung am: {{ vplanData.head.created }}</small>
 
-        <p class="mt-2 lead font-italic">{{ vplanData.info }}</p>
+      <p class="mt-2 lead font-italic">{{ vplanData.info }}</p>
 
-        <div class="aux mb-3 px-5" v-if="vplanData._type === 'teachers'">
-          <strong>Abwesend:</strong>
-          <br>
-          {{ vplanData.head.missing.teachers }}
-        </div>
-
-        <div class="aux" v-if="vplanData._type === 'teachers'">
-          <ul class="list-unstyled">
-            <strong>Aufsichten:</strong>
-            <li
-              v-for="(supervision, indexSupervision) in vplanData.supervision"
-              :key="indexSupervision"
-            >
-              <span
-                class="fancy-arrow"
-                v-html="makeArrowsFancy(supervision)"
-              ></span>
-            </li>
-          </ul>
-        </div>
-
+      <div class="aux mb-3 px-5" v-if="vplanData._type === 'teachers'">
+        <strong>Abwesend:</strong>
+        <br>
+        {{ vplanData.head.missing.teachers }}
       </div>
 
-      <div>
-        <table
-          ref="table"
-          class="shadow-sm table table-hover table-striped table-sm table-bordered table-responsive-md"
-          :class="{'table-dark': $isDarkMode}"
-        >
-          <thead ref="tableHead">
-            <tr>
-              <slot v-if="vplanData._type === 'students'">
-                <th><span>Klasse</span></th>
-                <th><span>Stunde</span></th>
-                <th><span>Fach</span></th>
-                <th><span>Lehrer</span></th>
-                <th><span>Raum</span></th>
-                <th><span>Info</span></th>
-              </slot>
-
-              <slot v-else-if="vplanData._type === 'teachers'">
-                <th><span>Lehrer</span></th>
-                <th><span>Stunde</span></th>
-                <th><span>Klasse/Kurs</span></th>
-                <th><span>Fach neu</span></th>
-                <th><span>Raum neu</span></th>
-                <th><span>für Fach</span></th>
-                <th><span>für Lehrer</span></th>
-                <th><span>Info</span></th>
-              </slot>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="entry in vplanData.body" :key="entry._id">
-              <td
-                v-for="(column, indexColumn) in columns[vplanData._type]"
-                :key="indexColumn"
-                :class="{
-                  'text-danger' : entry.changed.includes(column),
-                  'text-nowrap' : column === 'lesson'
-                }"
-              >{{ entry[column] }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="aux" v-if="vplanData._type === 'teachers'">
+        <ul class="list-unstyled">
+          <strong>Aufsichten:</strong>
+          <li
+            v-for="(supervision, indexSupervision) in vplanData.supervision"
+            :key="indexSupervision"
+          >
+            <span
+              class="fancy-arrow"
+              v-html="makeArrowsFancy(supervision)"
+            ></span>
+          </li>
+        </ul>
       </div>
+
     </div>
 
-    <div
-      v-else-if="this.vplanData === null"
-      key="vplanUnavailable"
-      class="alert alert-secondary"
-      role="alert"
-    >
-      Vertretungsplan folgt demnächst.
-    </div>
+    <div>
+      <table
+        ref="table"
+        class="shadow-sm table table-hover table-striped table-sm table-bordered table-responsive-md"
+      >
+        <thead ref="tableHead">
+          <tr>
+            <slot v-if="vplanData._type === 'students'">
+              <th><span>Klasse</span></th>
+              <th><span>Stunde</span></th>
+              <th><span>Fach</span></th>
+              <th><span>Lehrer</span></th>
+              <th><span>Raum</span></th>
+              <th><span>Info</span></th>
+            </slot>
 
-    <div
-      v-else-if="this.vplanData === undefined"
-      key="vplanLoadingSpinner"
-      class="d-flex justify-content-center m-5"
-    >
-      <div class="spinner-grow" style="width: 4rem; height: 4rem;" role="status">
-        <span class="sr-only">Loading...</span>
-      </div>
+            <slot v-else-if="vplanData._type === 'teachers'">
+              <th><span>Lehrer</span></th>
+              <th><span>Stunde</span></th>
+              <th><span>Klasse/Kurs</span></th>
+              <th><span>Fach neu</span></th>
+              <th><span>Raum neu</span></th>
+              <th><span>für Fach</span></th>
+              <th><span>für Lehrer</span></th>
+              <th><span>Info</span></th>
+            </slot>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="entry in vplanData.body" :key="entry._id">
+            <td
+              v-for="(column, indexColumn) in columns[vplanData._type]"
+              :key="indexColumn"
+              :class="{
+                'text-danger' : entry.changed.includes(column),
+                'text-nowrap' : column === 'lesson'
+              }"
+            >{{ entry[column] }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </transition>
+  </div>
 </template>
 
 <style scoped type="css">
@@ -135,6 +113,8 @@ table {
 </style>
 
 <script>
+import { debounce } from '@/lib/util.js'
+
 export default {
   name: 'VPlanTable',
 
@@ -181,8 +161,22 @@ export default {
       // Make table full width when too narrow
       if (tableContentWidth < tableViewportWidth) {
         this.$refs.table.classList.remove('table-responsive-md')
+      } else {
+        this.$refs.table.classList.add('table-responsive-md')
       }
     }
+  },
+
+  mounted () {
+    this._debouncedTableResponsivenessNeededCheck = debounce(() => this.tableResponsivenessNeededCheck(), 50)
+
+    window.addEventListener('orientationchange', this._debouncedTableResponsivenessNeededCheck)
+    window.addEventListener('resize', this._debouncedTableResponsivenessNeededCheck)
+  },
+
+  beforeDestroy () {
+    window.removeEventListener('orientationchange', this._debouncedTableResponsivenessNeededCheck)
+    window.removeEventListener('resize', this._debouncedTableResponsivenessNeededCheck)
   }
 }
 </script>

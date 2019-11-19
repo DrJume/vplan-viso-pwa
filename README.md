@@ -1,5 +1,8 @@
 # vplan-web
 
+## Sources
+- [iOS PWA Install Prompt](https://github.com/chrisdancee/react-ios-pwa-prompt)
+
 ## Project setup
 ```
 npm install

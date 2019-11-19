@@ -1,37 +1,66 @@
 <template>
   <div class="text-center">
     <ConnectivityBadge ref="connectivity_badge"></ConnectivityBadge>
-    <div>
-      <div class="btn-group btn-group-toggle pb-4">
-        <label
-          class="shadow-sm btn btn-secondary"
-          :class="display === 'current' ? ['active'] : ['text-blur']"
-          @click.prevent="updateVplan('current')"
-        >
-          <input type="radio"> Heute
-        </label>
+    <div class="btn-group btn-group-toggle pb-4">
+      <label
+        class="shadow-sm btn btn-secondary"
+        :class="displayQueue === 'current' ? ['active'] : ['text-blur']"
+        @click.prevent="updateVPlan('current')"
+      >
+        <input type="radio"> Heute
+      </label>
 
-        <label
-          class="shadow-sm btn btn-secondary"
-          :class="display === 'next' ? ['active'] : ['text-blur']"
-          @click.prevent="updateVplan('next')"
-        >
-          <input type="radio"> Folgend
-        </label>
-      </div>
+      <label
+        class="shadow-sm btn btn-secondary"
+        :class="displayQueue === 'next' ? ['active'] : ['text-blur']"
+        @click.prevent="updateVPlan('next')"
+      >
+        <input type="radio"> Folgend
+      </label>
+    </div>
 
-      <div
-        v-if="this.authSuccess === false"
-        class="alert alert-danger"
+    <transition name="fade" mode="out-in" appear>
+      <div v-if="this.error"
+        key="error"
+        class="alert alert-danger mx-auto d-flex align-items-center"
+        style="width: fit-content;"
         role="alert"
       >
+        <Octicon icon="alert" :scale="1.5" class="mr-2" />
+        Ein Fehler ist aufgetreten.
+      </div>
+
+      <div v-else-if="this.authSuccess === false"
+        key="badPassword"
+        class="alert alert-danger mx-auto d-flex align-items-center"
+        style="width: fit-content;"
+        role="alert"
+      >
+        <Octicon icon="lock" :scale="1.5" class="mr-2" />
         Dieser Inhalt ist passwortgeschützt.
       </div>
 
-      <VPlanTable v-else :vplanData="vplanData"></VPlanTable>
+      <div v-else-if="this.vplanData === null"
+        key="vplanUnavailable"
+        class="alert alert-secondary mx-auto d-flex align-items-center"
+        style="width: fit-content;"
+        role="alert"
+      >
+        <Octicon icon="calendar" :scale="1.5" class="mr-2" />
+        Vertretungsplan folgt demnächst.
+      </div>
 
-      <small class="font-weight-light font-italic">v{{ version }}</small>
-    </div>
+      <div v-else-if="this.vplanData === undefined"
+        key="vplanLoadingSpinner"
+        class="d-flex justify-content-center m-5"
+      >
+        <div class="spinner-grow" style="width: 4rem; height: 4rem;" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+
+      <VPlanTable v-else :vplanData="vplanData" key="vplanTable"></VPlanTable>
+    </transition>
   </div>
 </template>
 
@@ -44,8 +73,6 @@
 </style>
 
 <script>
-import pkg from '@/../package.json'
-
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import localForage from 'localforage'
@@ -63,7 +90,7 @@ const vplanCache = localForage.createInstance({
   name: 'MANOS V-Plan',
   version: 1.0,
   storeName: 'vplan_cache',
-  description: 'Caches VPlan files in JSON format locally'
+  description: ''
 })
 
 const vplanPasswdCookieName = 'vplan_passwd'
@@ -74,57 +101,43 @@ let auth = {
 
 axios.defaults.baseURL = 'https://manos-dresden.de/vplan/upload/'
 
-const authenticate = async (failed = 0) => {
-  if (Cookies.get(vplanPasswdCookieName)) {
-    auth.password = Cookies.get(vplanPasswdCookieName)
-    axios.defaults.auth = auth
+const VPlanCacheManager = {
+  async get (key) {
+    try {
+      return { cachedData: await vplanCache.getItem(key), error: null }
+    } catch (err) {
+      console.error('Problem with accessing localStorage/IndexedDB/WebSQL: ', err)
 
-    if (navigator.onLine) {
-      try {
-        await axios.get('test.txt')
-      } catch (error) {
-        if (
-          confirm('Daten konnten nicht geladen werden.\nSeite zurücksetzen?')
-        ) {
-          Cookies.remove(vplanPasswdCookieName)
-
-          location.reload(true)
-        }
-      }
+      return { cachedData: undefined, error: err }
     }
-
-    return true
+  },
+  async set (key, data) {
+    try {
+      await vplanCache.setItem(key, data)
+    } catch (err) {
+      console.error('Problem with accessing localStorage/IndexedDB/WebSQL: ', err)
+    }
+  },
+  async delete (key) {
+    try {
+      await vplanCache.removeItem(key)
+    } catch (err) {
+      console.error('Problem with accessing localStorage/IndexedDB/WebSQL: ', err)
+    }
   }
+}
 
-  const input = prompt(`${failed > 0 ? 'Falsches Passwort. ' : 'MANOS Vertretungsplan Passwort'}`, '')
-  if (input === null) return false
-  if (!input) return authenticate(failed + 1)
-  auth.password = input
-
-  try {
-    if (!navigator.onLine) {
-      alert('Keine Internetverbindung.')
+// Test the connection to the web server
+async function isBadPassword (auth) {
+  if (navigator.onLine) {
+    try {
+      await axios.get('test.txt', { auth })
 
       return false
+    } catch (error) {
+      return true
     }
-
-    await axios.get('test.txt', { auth })
-
-    Cookies.set(vplanPasswdCookieName, auth.password, {
-      expires: 120,
-      secure: true /* FIXME: disable only during development */
-    })
-    axios.defaults.auth = auth
-
-    return true
-  } catch {
-    if (failed >= 2) {
-      alert('Zu viele Falscheingaben!')
-      return false
-    }
-
-    return authenticate(failed + 1)
-  }
+  } else return false // ignore password check if offline
 }
 
 export default {
@@ -143,81 +156,164 @@ export default {
     return {
       authSuccess: undefined,
       vplanData: undefined,
-      display: ''
-    }
-  },
-
-  computed: {
-    version () {
-      return pkg.version
+      displayQueue: '',
+      error: null
     }
   },
 
   methods: {
-    async retreiveVplan (queue) {
+    async authenticate (failedAttemps = 0) {
+      if (Cookies.get(vplanPasswdCookieName)) {
+        auth.password = Cookies.get(vplanPasswdCookieName)
+
+        if (await isBadPassword(auth)) {
+          if (
+            confirm('Inhalte konnten nicht geladen werden.\nSeite zurücksetzen?')
+          ) {
+            Cookies.remove(vplanPasswdCookieName)
+            location.reload(true) // refresh and skip cache
+          }
+        }
+
+        axios.defaults.auth = auth
+
+        return true
+      }
+
+      if (axios.defaults.auth) {
+        if (await isBadPassword(axios.defaults.auth)) {
+          return this.authenticate(failedAttemps + 1)
+        }
+
+        return true
+      }
+
+      const inputPasswd = prompt(`${failedAttemps > 0 ? 'Falsches Passwort. ' : 'MANOS Vertretungsplan Passwort'}`, '')
+      if (inputPasswd === null) return false
+      if (!inputPasswd.trim()) return this.authenticate(failedAttemps + 1)
+      auth.password = inputPasswd
+
+      if (!navigator.onLine) {
+        alert('Keine Internetverbindung.')
+        return false
+      }
+
+      if (await isBadPassword(auth)) {
+        if (failedAttemps >= 2) {
+          alert('Zu viele Falscheingaben!')
+          return false
+        }
+
+        return this.authenticate(failedAttemps + 1)
+      }
+
+      Cookies.set(vplanPasswdCookieName, auth.password, {
+        expires: 120,
+        secure: true /* disable only during development */
+      })
+      axios.defaults.auth = auth
+
+      return true
+    },
+
+    async fetchVPlan (queue) {
+      this.error = null
       const vplanUrl = `${queue}/${this.type}.json`
-      console.debug(vplanUrl)
 
       if (navigator.onLine) {
         try {
           const vplanData = (await axios.get(vplanUrl)).data
-          await vplanCache.setItem(vplanUrl, vplanData)
+          await VPlanCacheManager.set(vplanUrl, vplanData)
 
           return vplanData
-        } catch {
-          await vplanCache.removeItem(vplanUrl)
+        } catch (error) {
+          if (error.response) {
+          // UNAUTHORIZED (wrong password)
+            if (error.response.status === 401) {
+              this.authSuccess = await this.authenticate()
+              if (!this.authSuccess) return
 
-          return null
+              return this.fetchVPlan(queue)
+            }
+
+            // NOT FOUND (no VPlan available)
+            if (error.response.status === 404) {
+              await VPlanCacheManager.delete(vplanUrl)
+              return null
+            }
+          }
+
+          // other error
+          console.error(error.toJSON())
+          this.error = 'NETWORK'
+          return undefined
         }
       } else {
-        this.$refs.connectivity_badge.warn_offline()
+        this.$refs.connectivity_badge.status('offline')
 
-        return vplanCache.getItem(vplanUrl)
+        const { cachedData, error } = await VPlanCacheManager.get(vplanUrl)
+        if (error) return null
+
+        return cachedData
       }
     },
 
-    async updateVplan (queue) {
+    async updateVPlan (queue) {
       this.vplanData = undefined
 
-      this.authSuccess = await authenticate()
-      if (!this.authSuccess) return
-
-      this.display = queue
-      this.vplanData = await this.retreiveVplan(queue)
+      this.displayQueue = queue // give first feedback
+      this.vplanData = await this.fetchVPlan(queue)
+      this.displayQueue = queue // update again (fixes slow network overlap)
     },
 
-    checkURLOptions () {
+    digestURLOptions () {
       if (['current', 'next'].includes(this.$route.query.d)) {
-        this.display = this.$route.query.d
+        return {
+          displayQueue: this.$route.query.d
+        }
       }
+      // Clean up url paramters
       if (Object.keys(this.$route.query).length !== 0) {
         this.$router.replace({ query: {} })
       }
+
+      return {}
+    },
+
+    networkConnectivityListener (event) {
+      this.$refs.connectivity_badge.status(event.type)
     }
   },
 
   async mounted () {
-    this.authSuccess = await authenticate()
+    this.authSuccess = await this.authenticate()
     if (!this.authSuccess) return
 
-    const hours = new Date().getHours()
-    const queueDay = hours < 12 ? 'current' : 'next'
-    this.updateVplan(queueDay)
+    const urlOptions = this.digestURLOptions()
+    if (urlOptions.displayQueue) {
+      await this.updateVPlan(urlOptions.displayQueue)
+    } else {
+      const hours = new Date().getHours()
+      const queueDay = hours < 12 ? 'current' : 'next'
 
-    this.checkURLOptions()
+      await this.updateVPlan(queueDay)
+    }
 
-    window.addEventListener('online', _ =>
-      this.$refs.connectivity_badge.info_online()
-    )
-    window.addEventListener('offline', _ =>
-      this.$refs.connectivity_badge.warn_offline()
-    )
+    window.addEventListener('online', this.networkConnectivityListener)
+    window.addEventListener('offline', this.networkConnectivityListener)
+  },
+
+  beforeDestroy () {
+    window.removeEventListener('online', this.networkConnectivityListener)
+    window.removeEventListener('offline', this.networkConnectivityListener)
   },
 
   watch: {
-    $route (to, from) {
-      this.checkURLOptions()
-      this.updateVplan(this.display)
+    async $route (to, from) {
+      const urlOptions = this.digestURLOptions()
+      if (urlOptions.displayQueue) {
+        await this.updateVPlan(urlOptions.displayQueue)
+      }
     }
   }
 }

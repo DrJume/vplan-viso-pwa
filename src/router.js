@@ -1,21 +1,26 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import ChooseUserType from './views/ChooseUserType.vue'
+import ChooseUserGroup from './views/ChooseUserGroup.vue'
 import About from './views/About.vue'
 import Settings from './views/Settings.vue'
 import VPlanView from './views/VPlanView.vue'
 
 Vue.use(Router)
 
-export default new Router({
+export default (appData) => new Router({
   mode: 'hash',
   base: '/vplan/',
   routes: [
     {
       path: '/',
       name: 'start',
-      component: ChooseUserType
+      component: ChooseUserGroup,
+      beforeEnter (to, from, next) {
+        if (appData.settings.userGroup) {
+          next({ name: appData.settings.userGroup, replace: true })
+        } else next()
+      }
     },
     {
       path: '/einstellungen',
@@ -30,13 +35,13 @@ export default new Router({
       meta: { backMenuOption: true }
     },
     {
-      path: '/schueler/',
+      path: '/schueler',
       name: 'students',
       component: VPlanView,
       props: { type: 'students' }
     },
     {
-      path: '/lehrer/',
+      path: '/lehrer',
       name: 'teachers',
       component: VPlanView,
       props: { type: 'teachers' }

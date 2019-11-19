@@ -73,26 +73,22 @@
 <script>
 export default {
   name: 'ConnectivityBadge',
+
   data () {
     return {
       active: false,
       type: ''
     }
   },
+
   methods: {
-    warn_offline () {
-      this.type = 'offline'
+    status (status) {
+      this.type = status
       this.active = false
-      setTimeout(() => {
+
+      this.$nextTick(() => {
         this.active = true
-      }, 1)
-    },
-    info_online () {
-      this.type = 'online'
-      this.active = false
-      setTimeout(() => {
-        this.active = true
-      }, 1)
+      })
     }
   }
 }
