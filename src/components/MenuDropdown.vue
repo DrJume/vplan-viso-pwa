@@ -20,6 +20,16 @@
           </div>
         </form>
 
+        <form action="" class="dropdown-item-text">
+          <div class="custom-control custom-switch right">
+            <input type="checkbox" v-model="App.settings.filter.active" class="custom-control-input" id="filter_switch">
+
+            <label class="custom-control-label d-inline-flex" for="filter_switch">
+              <Octicon icon="search" class="d-inline-flex align-items-center mr-2"/> Filter
+            </label>
+          </div>
+        </form>
+
         <div class="dropdown-divider"></div>
 
         <a class="dropdown-item d-inline-flex" :href="$router.resolve({name: 'settings'}).href">
@@ -48,6 +58,10 @@ export default {
 </script>
 
 <style scoped>
+.dropdown-menu >>> .octicon {
+  width: 16px;
+}
+
 .dropdown-item, .dropdown-item-text {
   padding-left: 1rem;
   padding-right: 1rem;

@@ -27,16 +27,18 @@
           </li>
         </ul>
       </div>
-
     </div>
 
+    <div class="text-left pl-1 text-muted">
+      <small>{{filteredVPlanBody.length}} von {{vplanData.body.length}} Einträgen</small>
+    </div>
     <div>
       <table
         ref="table"
         class="shadow-sm table table-hover table-striped table-sm table-bordered table-responsive-md"
       >
         <thead ref="tableHead">
-          <tr>
+          <tr v-if="filteredVPlanBody.length > 0">
             <slot v-if="vplanData._type === 'students'">
               <th><span>Klasse</span></th>
               <th><span>Stunde</span></th>
@@ -59,7 +61,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="entry in vplanData.body" :key="entry._id">
+          <tr v-for="entry in filteredVPlanBody" :key="entry._id">
             <td
               v-for="(column, indexColumn) in columns[vplanData._type]"
               :key="indexColumn"
@@ -74,43 +76,6 @@
     </div>
   </div>
 </template>
-
-<style scoped type="css">
-
-table {
-  overflow-wrap: break-word;
-}
-
-.fancy-arrow ::v-deep svg {
-  width: 18px;
-  height: 18px;
-  fill: currentColor;
-}
-
-@media (max-width: 767px) {
-  th > span {
-    writing-mode: vertical-lr;
-    text-orientation: mixed;
-    transform: rotate(180deg);
-    padding: 0.4rem 0 0.4rem 0;
-    vertical-align: bottom;
-    white-space: nowrap;
-    min-width: 1.2rem; /* Fix Safari vertical text width collapse issue and generally better centering */
-  }
-}
-
-@media (max-width: 460px) {
-  table, .aux {
-    font-size: 0.8rem;
-  }
-
-  .fancy-arrow ::v-deep svg {
-    width: 14px;
-    height: 14px;
-  }
-}
-
-</style>
 
 <script>
 import { debounce } from '@/lib/util.js'
@@ -147,6 +112,42 @@ export default {
     }
   },
 
+  computed: {
+    filteredVPlanBody () {
+      if (!this.App.settings.filter.active) return this.vplanData.body
+
+      const sanitizedQuery = this.App.settings.filter.query
+        .split(';').map(keyword => keyword.trim()).filter(keyword => !!keyword)
+
+      let queryRegExp
+      try {
+        queryRegExp = RegExp(sanitizedQuery.join('|'))
+      } catch (error) {
+        return []
+      }
+
+      console.debug('Filter RegExp: ', queryRegExp)
+
+      const filtered = this.vplanData.body.filter(val => {
+        let combination = false
+
+        if (this.App.settings.userGroup === 'students') {
+          combination = combination || queryRegExp.test(val.class)
+        } else { // teachers
+          combination = combination || queryRegExp.test(val.new_teacher)
+        }
+
+        if (this.App.settings.filter.searchInfo) {
+          combination = combination || queryRegExp.test(val.info)
+        }
+
+        return combination
+      })
+
+      return filtered
+    }
+  },
+
   methods: {
     makeArrowsFancy (supervision) {
       return supervision.replace(/-->/g, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 2 24 24"><path d="M16 8v-4l8 8-8 8v-4h-16l8-8h8z"/></svg>')
@@ -159,7 +160,7 @@ export default {
       const tableContentWidth = this.$refs.tableHead.clientWidth
 
       // Make table full width when too narrow
-      if (tableContentWidth < tableViewportWidth) {
+      if (tableContentWidth <= tableViewportWidth) {
         this.$refs.table.classList.remove('table-responsive-md')
       } else {
         this.$refs.table.classList.add('table-responsive-md')
@@ -168,7 +169,9 @@ export default {
   },
 
   mounted () {
-    this._debouncedTableResponsivenessNeededCheck = debounce(() => this.tableResponsivenessNeededCheck(), 50)
+    this.tableResponsivenessNeededCheck()
+
+    this._debouncedTableResponsivenessNeededCheck = debounce(() => this.tableResponsivenessNeededCheck(), 100)
 
     window.addEventListener('orientationchange', this._debouncedTableResponsivenessNeededCheck)
     window.addEventListener('resize', this._debouncedTableResponsivenessNeededCheck)
@@ -180,3 +183,39 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+table {
+  overflow-wrap: break-word;
+}
+
+.fancy-arrow >>> svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+@media (max-width: 767px) {
+  th > span {
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    padding: 0.4rem 0 0.4rem 0;
+    vertical-align: bottom;
+    white-space: nowrap;
+    min-width: 1.2rem; /* Fix Safari vertical text width collapse issue and generally better centering */
+  }
+}
+
+@media (max-width: 460px) {
+  table, .aux {
+    font-size: 0.8rem;
+  }
+
+  .fancy-arrow >>> svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+</style>

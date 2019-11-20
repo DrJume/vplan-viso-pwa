@@ -45,6 +45,10 @@ html.dark-theme {
       color: #ff7885 !important;
     }
 
+    .text-muted {
+      color: lighten($secondary, 20%) !important;
+    }
+
     .dropdown-menu {
       background-color: var(--dark);
       border-color: #454d55;
@@ -73,7 +77,10 @@ html.dark-theme {
       &:focus {
         color: currentColor;
       }
-      &:disabled {
+      &::placeholder {
+        color: lighten($secondary, 25%);
+      }
+      &:disabled, &.disabled {
         background-color: var(--gray) !important;
       }
       background-color: lighten($secondary, 3%) !important;

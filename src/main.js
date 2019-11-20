@@ -46,7 +46,8 @@ const defaultAppData = Vue.observable({
     userGroup: '',
     filter: {
       active: false,
-      keywords: ''
+      query: '',
+      searchInfo: false
     },
     darkMode: {
       active: false,
