@@ -53,10 +53,6 @@ export default {
   padding-right: 1rem;
 }
 
-.dropdown-menu >>> .octicon {
-  fill: currentColor;
-}
-
 .custom-switch {
   user-select: none;
 }
@@ -70,8 +66,7 @@ export default {
   display: none;
 }
 
-.dropdown-toggle >>> .dropdown-menu-icon {
-  fill: currentColor;
+.dropdown-menu-icon {
   width: 22px;
 }
 

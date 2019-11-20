@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h2>Einstellungen</h2>
-    <br>
+    <h2 class="mb-4">Einstellungen</h2>
 
     <div class="jumbotron p-3">
       <span class="lead">Allgemein</span>

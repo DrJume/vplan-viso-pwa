@@ -40,7 +40,7 @@ export default {
 </script>
 
 <style scoped>
-.octicon {
+span >>> .octicon {
   display: inline-block;
   vertical-align: text-top;
   fill: currentColor;

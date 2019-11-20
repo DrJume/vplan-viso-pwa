@@ -33,12 +33,16 @@ html.dark-theme {
   body {
     background-color: var(--dark);
 
-    #app *:not(.alert):not(.custom-control-label) {
-      color: var(--light);
+    #app, table, .btn, .dropdown-item, .dropdown-item-text, textarea {
+      color: var(--light) !important;
     }
 
     table {
       @extend .table-dark;
+    }
+
+    .text-danger {
+      color: #ff7885 !important;
     }
 
     .dropdown-menu {
@@ -62,7 +66,7 @@ html.dark-theme {
     }
 
     .jumbotron {
-      background-color: var(--secondary);
+      background-color: darken($secondary, 5%);
     }
 
     textarea {
@@ -72,7 +76,7 @@ html.dark-theme {
       &:disabled {
         background-color: var(--gray) !important;
       }
-      background-color: lighten($secondary, 10%) !important;
+      background-color: lighten($secondary, 3%) !important;
       border-color: darken($secondary, 7%);
     }
   }
