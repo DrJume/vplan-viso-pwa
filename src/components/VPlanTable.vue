@@ -156,15 +156,16 @@ export default {
     tableResponsivenessNeededCheck () {
       if (!this.vplanData) return
 
-      const tableViewportWidth = this.$refs.table.clientWidth
-      const tableContentWidth = this.$refs.tableHead.clientWidth
+      this.$refs.table.classList.add('table-responsive-md')
+      this.$nextTick(() => {
+        const tableViewportWidth = this.$refs.table.clientWidth
+        const tableContentWidth = this.$refs.tableHead.clientWidth
 
-      // Make table full width when too narrow
-      if (tableContentWidth <= tableViewportWidth) {
-        this.$refs.table.classList.remove('table-responsive-md')
-      } else {
-        this.$refs.table.classList.add('table-responsive-md')
-      }
+        // Make table full width when too narrow
+        if (tableContentWidth <= tableViewportWidth) {
+          this.$refs.table.classList.remove('table-responsive-md')
+        }
+      })
     }
   },
 
@@ -175,6 +176,10 @@ export default {
 
     window.addEventListener('orientationchange', this._debouncedTableResponsivenessNeededCheck)
     window.addEventListener('resize', this._debouncedTableResponsivenessNeededCheck)
+  },
+
+  updated () {
+    this.tableResponsivenessNeededCheck()
   },
 
   beforeDestroy () {
