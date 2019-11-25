@@ -10,7 +10,7 @@
         <label for="filter_keywords">Filter</label>
 
         <textarea
-          @blur="App.settings.filter.query = $event.target.value.trim()"
+          @blur="formatFilterQueryInput($event)"
           :value="App.settings.filter.query"
           :class="{'disabled': !App.settings.filter.active}"
           class="form-control" id="filter_keywords" rows="2"
@@ -64,7 +64,23 @@
 <script>
 export default {
   name: 'Settings',
+
+  beforeRouteLeave (to, from, next) {
+    // Update userGroup on settings back navigation to a vplanview page
+    if (to.meta.isVPlanView && to.name !== this.App.settings.userGroup) {
+      next({ name: this.App.settings.userGroup, replace: true })
+    } else next()
+  },
+
   methods: {
+    formatFilterQueryInput (event) {
+      const formatted = event.target.value.trim().split(';')
+        .map(keyword => keyword.replace(/ /g, '')).filter(keyword => !!keyword).join('; ')
+
+      event.target.value = formatted
+      this.App.settings.filter.query = formatted
+    },
+
     systemDarkModeSupported () {
       if (window.matchMedia('(prefers-color-scheme)').media !== 'not all') {
         return true
@@ -77,6 +93,18 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+// Change padding of inline-checkboxes on narrow screens
+@media (max-width: 390px) {
+  .custom-checkbox.custom-control-inline {
+    & .custom-control-label {
+      &:before, &:after {
+        left: -1.2rem;
+      }
+    }
+
+    padding-left: 1.2rem;
+  }
+}
 
 </style>

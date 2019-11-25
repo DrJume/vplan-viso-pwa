@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
     <h2 class="mb-4">Über</h2>
 
     <p class="lead">

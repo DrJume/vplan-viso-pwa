@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <ConnectivityBadge ref="connectivity_badge"></ConnectivityBadge>
+    <ConnectivityBadge class="position-absolute" ref="connectivity_badge"></ConnectivityBadge>
     <div class="btn-group btn-group-toggle pb-4">
       <label
         class="shadow-sm btn btn-secondary"
@@ -314,6 +314,11 @@ export default {
       if (urlOptions.displayQueue) {
         await this.updateVPlan(urlOptions.displayQueue)
       }
+    },
+
+    type () {
+      if (!this.displayQueue) return
+      this.updateVPlan(this.displayQueue)
     }
   }
 }

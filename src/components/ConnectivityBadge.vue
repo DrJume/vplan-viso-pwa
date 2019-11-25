@@ -1,5 +1,5 @@
 <template>
-  <div ref="cb" class="connectivity-badge" :class="{blink: active}">
+  <div class="connectivity-badge" :class="{blink: active}">
     <span v-if="type === 'offline'" class="badge badge-warning">
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
         <path fill="none" d="M0 0h24v24H0V0z"></path>
@@ -35,30 +35,6 @@
   left: 15px;
   float: left;
   z-index: 2;
-}
-
-@media (min-width: 576px) {
-  .connectivity-badge {
-    left: calc(50% - (540px / 2) + 15px);
-  }
-}
-
-@media (min-width: 768px) {
-  .connectivity-badge {
-    left: calc(50vw - (720px / 2) + 15px);
-  }
-}
-
-@media (min-width: 992px) {
-  .connectivity-badge {
-    left: calc(50vw - (960px / 2) + 15px);
-  }
-}
-
-@media (min-width: 1200px) {
-  .connectivity-badge {
-    left: calc(50vw - (1140px / 2) + 15px);
-  }
 }
 
 .connectivity-badge {

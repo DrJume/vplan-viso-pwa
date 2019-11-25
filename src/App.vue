@@ -3,7 +3,9 @@
     <div id="app" class="container position-relative pt-4">
       <MenuDropdown v-if="$route.name !== 'start'" class="app-menu position-absolute"></MenuDropdown>
       <transition name="fade" mode="out-in" appear>
-        <router-view/>
+        <keep-alive include="VPlanView">
+          <router-view/>
+        </keep-alive>
       </transition>
     </div>
     <!-- <iOSPWAPrompt/> -->
@@ -17,6 +19,7 @@ import MenuDropdown from '@/components/MenuDropdown.vue'
 
 export default {
   name: 'App',
+
   components: {
     MenuDropdown
   }
@@ -24,7 +27,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 @import "~bootstrap/scss/bootstrap.scss";
 
 html.dark-theme {
@@ -33,7 +35,12 @@ html.dark-theme {
   body {
     background-color: var(--dark);
 
-    #app, table, .btn, .dropdown-item, .dropdown-item-text, textarea {
+    #app,
+    table,
+    .btn,
+    .dropdown-item,
+    .dropdown-item-text,
+    textarea {
       color: var(--light) !important;
     }
 
@@ -54,12 +61,13 @@ html.dark-theme {
       border-color: #454d55;
 
       .dropdown-divider {
-        border-color: rgba(255,255,255,0.07) !important;
+        border-color: rgba(255, 255, 255, 0.07) !important;
       }
 
       .dropdown-item {
-        &:hover, &:focus {
-          background-color: rgba(255,255,255,0.08) !important;
+        &:hover,
+        &:focus {
+          background-color: rgba(255, 255, 255, 0.08) !important;
           color: var(--light);
         }
 
@@ -80,7 +88,8 @@ html.dark-theme {
       &::placeholder {
         color: lighten($secondary, 25%);
       }
-      &:disabled, &.disabled {
+      &:disabled,
+      &.disabled {
         background-color: var(--gray) !important;
       }
       background-color: lighten($secondary, 3%) !important;
@@ -101,6 +110,8 @@ html.dark-theme {
 }
 
 #app {
+  user-select: none;
+
   // @import "~bootstrap/scss/bootstrap.scss";
 }
 
@@ -114,8 +125,9 @@ html.dark-theme {
   opacity: 0;
 }
 
-.custom-switch { // source: https://github.com/twbs/bootstrap/pull/28052
-   &.right {
+// source: https://github.com/twbs/bootstrap/pull/28052
+.custom-switch {
+  &.right {
     padding-left: 0;
     .custom-control-label {
       padding-right: 2.5rem;
@@ -131,5 +143,4 @@ html.dark-theme {
     }
   }
 }
-
 </style>

@@ -38,13 +38,15 @@ export default (appData) => new Router({
       path: '/schueler',
       name: 'students',
       component: VPlanView,
-      props: { type: 'students' }
+      props: { type: 'students' },
+      meta: { isVPlanView: true }
     },
     {
       path: '/lehrer',
       name: 'teachers',
       component: VPlanView,
-      props: { type: 'teachers' }
+      props: { type: 'teachers' },
+      meta: { isVPlanView: true }
     },
     {
       path: '*',

@@ -64,8 +64,8 @@ const defaultAppData = Vue.observable({
 
   if (appData === null) appData = {}
 
-  // Patch/Update stored settings
-  appData = recursiveObjPatch(defaultAppData, appData, (key, regular) => {
+  // Patch/Update stored settings; appData inherits reactivity
+  appData = recursiveObjPatch(defaultAppData, appData, (key, defaultValue) => {
     console.debug(key)
 
     if (key === 'settings.darkMode.definedBySystem') {
@@ -81,7 +81,7 @@ const defaultAppData = Vue.observable({
       }
     }
 
-    return regular
+    return defaultValue
   })
   await AppDataHandler.save(appData)
 

@@ -128,20 +128,20 @@ export default {
 
       console.debug('Filter RegExp: ', queryRegExp)
 
-      const filtered = this.vplanData.body.filter(val => {
-        let combination = false
+      const filtered = this.vplanData.body.filter(entry => {
+        let filterCondition = false
 
         if (this.App.settings.userGroup === 'students') {
-          combination = combination || queryRegExp.test(val.class)
+          filterCondition = filterCondition || queryRegExp.test(entry.class.replace(/ /g, ''))
         } else { // teachers
-          combination = combination || queryRegExp.test(val.new_teacher)
+          filterCondition = filterCondition || queryRegExp.test(entry.new_teacher.replace(/ /g, ''))
         }
 
         if (this.App.settings.filter.searchInfo) {
-          combination = combination || queryRegExp.test(val.info)
+          filterCondition = filterCondition || queryRegExp.test(entry.info)
         }
 
-        return combination
+        return filterCondition
       })
 
       return filtered
@@ -192,6 +192,10 @@ export default {
 <style scoped>
 table {
   overflow-wrap: break-word;
+}
+
+tbody {
+  user-select: text;
 }
 
 .fancy-arrow >>> svg {
