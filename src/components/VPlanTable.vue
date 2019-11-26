@@ -119,6 +119,9 @@ export default {
       const sanitizedQuery = this.App.settings.filter.query
         .split(';').map(keyword => keyword.trim()).filter(keyword => !!keyword)
 
+      // Add "MANOS" query keyword, because nobody adds it to their filter
+      sanitizedQuery.push('MANOS')
+
       let queryRegExp
       try {
         queryRegExp = RegExp(sanitizedQuery.join('|'))

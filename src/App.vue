@@ -77,6 +77,11 @@ html.dark-theme {
       }
     }
 
+    .popover {
+      background-color: lighten($secondary, 40%);
+      border-color: rgba(0, 0, 0, 0.25);
+    }
+
     .jumbotron {
       background-color: darken($secondary, 5%);
     }

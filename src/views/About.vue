@@ -19,6 +19,13 @@
       </dd>
 
       <br>
+      <dt>Kontakt</dt>
+      <dd>
+        <a href="mailto:vplan-support@manos-dresden.lernsax.de">vplan-support@manos-dresden.lernsax.de</a><br>
+        <em>Feedback ist erwünscht ;)</em>
+      </dd>
+
+      <br>
       <dt>Open Source</dt>
       <dd>
         <ul class="list-unstyled mb-0">

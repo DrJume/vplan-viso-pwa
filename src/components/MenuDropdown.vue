@@ -58,6 +58,10 @@ export default {
 </script>
 
 <style scoped>
+.dropdown-menu {
+  z-index: 1100;
+}
+
 .dropdown-menu >>> .octicon {
   width: 16px;
 }

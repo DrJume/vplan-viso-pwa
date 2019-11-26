@@ -9,12 +9,18 @@
       <div class="form-group">
         <label for="filter_keywords">Filter</label>
 
+        <div class="float-right">
+          <a tabindex="0" role="button" id="filterQueryHelpPopover" class="d-inline-flex align-bottom text-reset">
+            <Octicon class="d-inline-flex" icon="question" />
+          </a>
+        </div>
+
         <textarea
           @blur="formatFilterQueryInput($event)"
           :value="App.settings.filter.query"
           :class="{'disabled': !App.settings.filter.active}"
           class="form-control" id="filter_keywords" rows="2"
-          placeholder="Bsp: 10a; Kra; JG11; eth2; ..."
+          placeholder="Bsp: 8c; JG11; JG12/de1; Kra; ..."
         ></textarea>
 
         <div class="custom-control custom-checkbox custom-control-inline mt-1 mr-0">
@@ -62,8 +68,28 @@
 </template>
 
 <script>
+import $ from 'jquery'
+
 export default {
   name: 'Settings',
+
+  mounted () {
+    $('#filterQueryHelpPopover').popover({
+      trigger: 'focus',
+      html: true,
+      content: `<b>Suchbegriffe:</b>
+          <ul class="list-unstyled m-0">
+            <li> - <span class="text-monospace">;</span>-getrennte Liste</li>
+            <li> - Leerzeichen werden ignoriert</li>
+            <li> - Durchsucht <span class="text-monospace">|Klasse|</span> bzw. <span class="text-monospace">|Lehrer|</span></li>
+            <li> - Bsp: <span class="text-monospace">'8c; JG11; JG12/de1; Kra'</span>
+          </ul>`,
+      template: '<div class="popover" role="tooltip"><div class="popover-body"></div></div>',
+      placement: 'left',
+      offset: '-40%p',
+      container: this.$el
+    })
+  },
 
   beforeRouteLeave (to, from, next) {
     // Update userGroup on settings back navigation to a vplanview page
