@@ -1,4 +1,4 @@
-# vplan-web
+# vplan-viso-pwa
 
 ## Sources
 - [iOS PWA Install Prompt](https://github.com/chrisdancee/react-ios-pwa-prompt)
